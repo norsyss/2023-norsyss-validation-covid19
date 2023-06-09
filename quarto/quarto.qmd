@@ -1,0 +1,59 @@
+---
+title: "Title"
+author: "Author"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+#| include: false
+# initialize the project
+# note: remember to keep in sync with run.R
+project <- org::initialize_project(
+  env     = .GlobalEnv,
+  home    = "~/2023-time-to-stable-estimates",
+  quarto  = "~/2023-time-to-stable-estimates/quarto",
+  data    = "~/2023-time-to-stable-estimates/data",
+  results = "~/2023-time-to-stable-estimates/results",
+  folders_to_be_sourced = "R"
+)
+
+library(data.table)
+library(ggplot2)
+library(magrittr)
+
+results <- readRDS(org::path(org::project$data, "results_cleaned.RDS"))
+```
+
+## Introduction
+
+The Norwegian Syndromic Surveillance System (NorSySS) is a vital public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures. One of the key goals of NorSySS is to detect trends and possible outbreaks of infectious diseases as early as possible, so that infection control measures can be implemented promptly. However, one of the biggest hindrances to achieving this goal is registration delay.
+
+Registration delay refers to the time it takes for a consultation with a general practitioner or out-of-hours primary care facility to be recorded in the NorSySS system. This delay can be caused by a variety of factors, such as delays in data entry, delays in data transmission, or delays in processing of reimbursement claims.
+
+Despite these challenges, it is crucial to detect outbreaks of infectious diseases quickly, as this can help prevent further spread of the disease and reduce its impact on public health. The timely detection of outbreaks can also help healthcare providers and policymakers make informed decisions about infection control measures, such as targeted vaccination campaigns or quarantine measures.
+
+Therefore, it is important to determine how long it takes for the proportion of consultations with a particular diagnosis to become stable, as this can provide valuable information for infectious disease surveillance. By identifying the minimum number of days and sample sizes required for the proportion to become stable, NorSySS can improve the accuracy and reliability of its data and strengthen its ability to detect outbreaks of infectious diseases in a timely manner.
+
+In this study, we will analyze NorSySS data from a specific time period and evaluate the stability of the proportion of consultations with a particular diagnosis using statistical methods. We will also assess the impact of registration delay on the stability of the proportion, and provide recommendations for the minimum number of days and sample sizes required for the proportion to become stable, even in the face of registration delay.
+
+Overall, this study will contribute to our understanding of the challenges and opportunities of infectious disease surveillance using NorSySS, and provide valuable insights for the improvement of NorSySS and other syndromic surveillance systems.
+
+```{r}
+#| echo: false
+pd <- results[probability==0.5 & magnitude==1.05,.(
+  granularity_geo,
+  pop,
+  consulations_all = paste0(consultations_all_mean_n, " (", consultations_all_sd_n, ")"),
+  consulations_diagnosis == paste0(consultations_diagnosis_mean_n, " (", consultations_diagnosis_sd_n, ")")]
+```
+
+## Methods
+
+## Results
+
+## Discussion
+
+## Conclusions
+
+

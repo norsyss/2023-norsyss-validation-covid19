@@ -1,0 +1,11 @@
+project:
+  output-dir: rendered_quarto
+
+toc: true
+number-sections: true
+
+format:
+  pdf:
+    documentclass: report
+  docx:
+    default
