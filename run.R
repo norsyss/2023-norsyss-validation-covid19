@@ -3,9 +3,9 @@
 project <- org::initialize_project(
   env     = .GlobalEnv,
   home    = "~/articles/2023-norsyss-validation-covid19",
-  quarto  = "~/2023-norsyss-validation-covid19/quarto",
-  data    = "~/2023-norsyss-validation-covid19/data",
-  results = "~/2023-norsyss-validation-covid19/results",
+  quarto  = "~/articles/2023-norsyss-validation-covid19/quarto",
+  data    = "~/articles/2023-norsyss-validation-covid19/data",
+  results = "~/articles/2023-norsyss-validation-covid19/results",
   folders_to_be_sourced = "R"
 )
 
