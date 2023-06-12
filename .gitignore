@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+@eaDir
+.DS_Store

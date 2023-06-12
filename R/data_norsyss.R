@@ -58,3 +58,9 @@ save_norsyss_data <- function(){
   retval <- rbindlist(retval)
   saveRDS(retval, fs::path(org::project$data, "norsyss.RDS"))
 }
+
+get_norsyss_data <- function(){
+  x <- readRDS(fs::path(org::project$data, "norsyss.RDS"))
+  x <- x[isoyearweek >= "2020-09" & isoyearweek <= "2023-20"]
+  return(x)
+}

@@ -1,6 +1,5 @@
 ---
-title: "Title"
-author: "Author"
+title: "Validating COVID-19 Surveillance in the Norwegian Syndromic Surveillance System (NorSySS)"
 editor_options:
   chunk_output_type: console
 ---
@@ -11,10 +10,22 @@ editor_options:
 # note: remember to keep in sync with run.R
 project <- org::initialize_project(
   env     = .GlobalEnv,
-  home    = "~/2023-time-to-stable-estimates",
-  quarto  = "~/2023-time-to-stable-estimates/quarto",
-  data    = "~/2023-time-to-stable-estimates/data",
-  results = "~/2023-time-to-stable-estimates/results",
+  home    = c(
+    "~/articles/2023-norsyss-validation-covid19",
+    "~/fhi/2023-norsyss-validation-covid19"
+  ),
+  quarto  = c(
+    "~/articles/2023-norsyss-validation-covid19/quarto",
+    "~/fhi/2023-norsyss-validation-covid19/quarto"
+  ),
+  data    = c(
+    "~/articles/2023-norsyss-validation-covid19/data",
+    "~/fhi/2023-norsyss-validation-covid19/data"
+  ),
+  results = c(
+    "~/articles/2023-norsyss-validation-covid19/results",
+    "~/fhi/2023-norsyss-validation-covid19/results"
+  ),
   folders_to_be_sourced = "R"
 )
 
@@ -22,35 +33,177 @@ library(data.table)
 library(ggplot2)
 library(magrittr)
 
-results <- readRDS(org::path(org::project$data, "results_cleaned.RDS"))
+results_p1 <- readRDS(org::path(org::project$data, "results_p1.RDS"))
+results_p2 <- readRDS(org::path(org::project$data, "results_p2.RDS"))
 ```
 
 ## Introduction
 
-The Norwegian Syndromic Surveillance System (NorSySS) is a vital public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures. One of the key goals of NorSySS is to detect trends and possible outbreaks of infectious diseases as early as possible, so that infection control measures can be implemented promptly. However, one of the biggest hindrances to achieving this goal is registration delay.
+The Norwegian Syndromic Surveillance System (NorSySS) is a vital public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures. 
 
-Registration delay refers to the time it takes for a consultation with a general practitioner or out-of-hours primary care facility to be recorded in the NorSySS system. This delay can be caused by a variety of factors, such as delays in data entry, delays in data transmission, or delays in processing of reimbursement claims.
-
-Despite these challenges, it is crucial to detect outbreaks of infectious diseases quickly, as this can help prevent further spread of the disease and reduce its impact on public health. The timely detection of outbreaks can also help healthcare providers and policymakers make informed decisions about infection control measures, such as targeted vaccination campaigns or quarantine measures.
-
-Therefore, it is important to determine how long it takes for the proportion of consultations with a particular diagnosis to become stable, as this can provide valuable information for infectious disease surveillance. By identifying the minimum number of days and sample sizes required for the proportion to become stable, NorSySS can improve the accuracy and reliability of its data and strengthen its ability to detect outbreaks of infectious diseases in a timely manner.
-
-In this study, we will analyze NorSySS data from a specific time period and evaluate the stability of the proportion of consultations with a particular diagnosis using statistical methods. We will also assess the impact of registration delay on the stability of the proportion, and provide recommendations for the minimum number of days and sample sizes required for the proportion to become stable, even in the face of registration delay.
-
-Overall, this study will contribute to our understanding of the challenges and opportunities of infectious disease surveillance using NorSySS, and provide valuable insights for the improvement of NorSySS and other syndromic surveillance systems.
-
-```{r}
-#| echo: false
-pd <- results[probability==0.5 & magnitude==1.05,.(
-  granularity_geo,
-  pop,
-  consulations_all = paste0(consultations_all_mean_n, " (", consultations_all_sd_n, ")"),
-  consulations_diagnosis == paste0(consultations_diagnosis_mean_n, " (", consultations_diagnosis_sd_n, ")")]
-```
+https://link.springer.com/article/10.3758/s13428-015-0611-2
 
 ## Methods
 
 ## Results
+
+
+```{r}
+#| echo: false
+#| results: hide
+file <- org::path(org::project$results_today, "plot1.png")
+
+png(file, width = 2000, height = 2000, res = 300)
+par(mfrow=c(2,2))
+plot(results_p1$norsyss, main = "NorSySS (R991+R992, fe)")
+plot(results_p1$hospital, main = "Hospital")
+plot(results_p1$icu, main = "ICU")
+plot(results_p1$death, main = "Death")
+dev.off()
+par(mfrow=c(1,1))
+```
+
+```{r}
+#| echo: false
+#| fig-cap: Partial autocorrelation plots (PACF) of four time series (NorSySS R991+R992 fe, new hospital admissions, new ICU admissions, new deaths) for all of Norway.
+knitr::include_graphics(file)
+```
+
+```{r}
+#| echo: false
+#| fig-cap: Cross-correlation coefficients after pre-whitening between various NorSySS ICPC-2/tariff codes and hard endpoints between 2020-09 and 2023-20 for all of Norway.
+
+file <- org::path(org::project$results_today, "plot2.png")
+
+pd <- results_p2[
+  lag >= -5 & lag <= 5 &
+  time %in% "all"
+  ]
+pd[, y_label := paste0(icpc2group_label," (",tariffgroup_tag,")")]
+
+q <- ggplot(
+  pd,
+  aes(
+    y = lag_factor_reverse,
+    x = tariffgroup_tag,
+    fill = autocorrelation_color,
+    label = autocorrelation_label_zero_for_non_sig
+  )
+)
+q <- q + geom_tile(color = "black", lwd=0.2)
+q <- q + geom_text(size = 2)
+q <- q + scale_fill_manual(
+  "Cross-correlation coefficients\nbetween NorSySS and hard\nendpoints after pre-whitening",
+  values = c(
+    "#4575b4",
+    "#74add1",
+    "#abd9e9",
+    "#e0f3f8",
+    "grey",
+    "#fee090",
+    "#fdae61",
+    "#f46d43",
+    "#d73027",
+    "white"
+  ),
+  breaks = c(
+    "-1.00 to -0.91 (Very strong)", 
+    "-0.71 to -0.90 (High)", 
+    "-0.41 to -0.70 (Moderate)", 
+    "-0.21 to -0.40 (Weak)", 
+    "-0.20 to 0.20 (Very weak)", 
+    "0.21 to 0.40 (Weak)", 
+    "0.41 to 0.70 (Moderate)", 
+    "0.71 to 0.90 (High)", 
+    "1.00 to 0.91 (Very strong)", 
+    "Not significant"
+  ),
+  drop=F
+)
+q <- q + facet_grid(icpc2group_label~hard_label)
+q <- q + theme_gray(base_size = 8)
+q <- q + theme(legend.position = "bottom")
+q <- q + guides(fill = guide_legend(nrow = 5)) 
+q <- q + scale_x_discrete("NorSySS tariff group")
+q <- q + scale_y_discrete("Weeks lag (+1 means NorSySS is correlated with events that occur one week later)")
+
+csstyle::save_a4(
+  q, 
+  file,
+  landscape = FALSE,
+  scaling_factor = 0.7
+)
+knitr::include_graphics(file)
+```
+
+
+```{r}
+#| echo: false
+#| fig-cap: Cross-correlation coefficients after pre-whitening between NorSySS (R991+R992, fe) and hard endpoints over various time-periods (Wuhan 2020-09 to 2021-06, Alpha 2021-07 to 2021-26, Delta 2021-27 to 2021-51, Omicron 2021-52 to 2023-20, No control 2022-07 to 2023-20, All 2020-09 to 2023-20) for all of Norway.
+
+#| fig-cap: Cross-correlation coefficients between NorSySS (R991+R992, fe) and hard endpoints after pre-whitening
+
+file <- org::path(org::project$results_today, "plot3.png")
+
+pd <- results_p2[
+  lag >= -5 & lag <= 5 &
+  icpc2group_tag == "covid19" &
+  tariffgroup_tag == "fe"
+  ]
+
+q <- ggplot(
+  pd,
+  aes(
+    x = factor(lag),
+    y = time_label,
+    fill = autocorrelation_color,
+    label = autocorrelation_label_zero_for_non_sig
+  )
+)
+q <- q + geom_tile(color = "black", lwd=0.2)
+q <- q + geom_text(size = 3)
+q <- q + scale_fill_manual(
+"Cross-correlation coefficients\nbetween NorSySS and hard\nendpoints after pre-whitening",
+  values = c(
+    "#4575b4",
+    "#74add1",
+    "#abd9e9",
+    "#e0f3f8",
+    "grey",
+    "#fee090",
+    "#fdae61",
+    "#f46d43",
+    "#d73027",
+    "white"
+  ),
+  breaks = c(
+    "-1.00 to -0.91 (Very strong)", 
+    "-0.71 to -0.90 (High)", 
+    "-0.41 to -0.70 (Moderate)", 
+    "-0.21 to -0.40 (Weak)", 
+    "-0.20 to 0.20 (Very weak)", 
+    "0.21 to 0.40 (Weak)", 
+    "0.41 to 0.70 (Moderate)", 
+    "0.71 to 0.90 (High)", 
+    "1.00 to 0.91 (Very strong)", 
+    "Not significant"
+  ),
+  drop=F
+)
+q <- q + facet_grid(hard_label~.)
+q <- q + theme_gray(base_size = 8)
+q <- q + theme(legend.position = "bottom")
+q <- q + guides(fill = guide_legend(nrow = 5)) 
+q <- q + scale_x_discrete("Weeks lag (+1 means NorSySS is correlated with events that occur one week later)")
+q <- q + scale_y_discrete("Time period")
+csstyle::save_a4(
+  q, 
+  file,
+  landscape = FALSE,
+  scaling_factor = 0.7
+)
+knitr::include_graphics(file)
+```
 
 ## Discussion
 

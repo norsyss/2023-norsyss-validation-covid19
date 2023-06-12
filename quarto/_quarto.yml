@@ -1,11 +1,16 @@
 project:
   output-dir: rendered_quarto
 
-toc: true
+toc: FALSE
 number-sections: true
 
 format:
   pdf:
-    documentclass: report
+    documentclass: scrartcl
+    papersize: a4paper
+    fontsize: '12'
+    linestretch: 1.25
+    indent: true
+    fig-pos: 'H'
   docx:
     default
