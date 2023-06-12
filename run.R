@@ -5,20 +5,20 @@
 project <- org::initialize_project(
   env     = .GlobalEnv,
   home    = c(
-    "~/articles/2023-norsyss-validation-covid19",
-    "~/fhi/2023-norsyss-validation-covid19"
+    "~/articles/2023-norsyss-statistical-evaluation-covid19",
+    "~/fhi/2023-norsyss-statistical-evaluation-covid19"
   ),
   quarto  = c(
-    "~/articles/2023-norsyss-validation-covid19/quarto",
-    "~/fhi/2023-norsyss-validation-covid19/quarto"
+    "~/articles/2023-norsyss-statistical-evaluation-covid19/quarto",
+    "~/fhi/2023-norsyss-statistical-evaluation-covid19/quarto"
   ),
   data    = c(
-    "~/articles/2023-norsyss-validation-covid19/data",
-    "~/fhi/2023-norsyss-validation-covid19/data"
+    "~/articles/2023-norsyss-statistical-evaluation-covid19/data",
+    "~/fhi/2023-norsyss-statistical-evaluation-covid19/data"
   ),
   results = c(
-    "~/articles/2023-norsyss-validation-covid19/results",
-    "~/fhi/2023-norsyss-validation-covid19/results"
+    "~/articles/2023-norsyss-statistical-evaluation-covid19/results",
+    "~/fhi/2023-norsyss-statistical-evaluation-covid19/results"
   ),
   folders_to_be_sourced = "R"
 )

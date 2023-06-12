@@ -4,3 +4,4 @@
 .Ruserdata
 @eaDir
 .DS_Store
+.smbdelete**

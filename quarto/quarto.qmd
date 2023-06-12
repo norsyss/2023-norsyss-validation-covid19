@@ -1,6 +1,7 @@
 ---
-title: "Validating COVID-19 Surveillance in the Norwegian Syndromic Surveillance System (NorSySS)"
+title: "A Statistical Evaluation of COVID-19 Surveillance in the Norwegian Syndromic Surveillance System (NorSySS)"
 bibliography: references.bib
+csl: biomed-central.csl
 editor_options:
   chunk_output_type: console
 ---
@@ -12,20 +13,20 @@ editor_options:
 project <- org::initialize_project(
   env     = .GlobalEnv,
   home    = c(
-    "~/articles/2023-norsyss-validation-covid19",
-    "~/fhi/2023-norsyss-validation-covid19"
+    "~/articles/2023-norsyss-statistical-evaluation-covid19",
+    "~/fhi/2023-norsyss-statistical-evaluation-covid19"
   ),
   quarto  = c(
-    "~/articles/2023-norsyss-validation-covid19/quarto",
-    "~/fhi/2023-norsyss-validation-covid19/quarto"
+    "~/articles/2023-norsyss-statistical-evaluation-covid19/quarto",
+    "~/fhi/2023-norsyss-statistical-evaluation-covid19/quarto"
   ),
   data    = c(
-    "~/articles/2023-norsyss-validation-covid19/data",
-    "~/fhi/2023-norsyss-validation-covid19/data"
+    "~/articles/2023-norsyss-statistical-evaluation-covid19/data",
+    "~/fhi/2023-norsyss-statistical-evaluation-covid19/data"
   ),
   results = c(
-    "~/articles/2023-norsyss-validation-covid19/results",
-    "~/fhi/2023-norsyss-validation-covid19/results"
+    "~/articles/2023-norsyss-statistical-evaluation-covid19/results",
+    "~/fhi/2023-norsyss-statistical-evaluation-covid19/results"
   ),
   folders_to_be_sourced = "R"
 )
@@ -40,14 +41,72 @@ results_p2 <- readRDS(org::path(org::project$data, "results_p2.RDS"))
 
 ## Introduction
 
-The Norwegian Syndromic Surveillance System (NorSySS) is a vital public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures. @fredrickson2011low
+The Norwegian Syndromic Surveillance System (NorSySS) is a vital public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures.[@swanson2022one] As of the time of publishing, NorSySS surveils 87 ICPC-2 code combinations on a daily basis, at the national, county, and municipality level. The data
 
 https://link.springer.com/article/10.3758/s13428-015-0611-2
 
 ## Methods
 
+| Attribute          | Definition                                                                                              |
+|--------------------|---------------------------------------------------------------------------------------------------------|
+| Data quality       | Completeness and validity of the data recorded in the public health surveillance system.                |
+| Sensitivity        | Ability to detect outbreaks, including the ability to monitor changes in the number of cases over time. |
+| Representativeness | Accurately describing the occurrence of a health-related event over time.                               |
+| Timeliness         | The speed between steps in a public health surveillance system.                                         |
+
+: Attributes relevant to the statistical evaluation of COVID-19 surveillance in NorSySS.[@guidelines2001]
+
 ## Results
 
++------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Indicator                                | Value                                                                                                                                                                                                                                                                                                                            |
++==========================================+==================================================================================================================================================================================================================================================================================================================================+
+| Purpose and objectives                   | -   Monitor trends of COVID-19.                                                                                                                                                                                                                                                                                                  |
+|                                          |                                                                                                                                                                                                                                                                                                                                  |
+|                                          | -   Detect outbreaks of COVID-19                                                                                                                                                                                                                                                                                                 |
+|                                          |                                                                                                                                                                                                                                                                                                                                  |
+|                                          | -   Provide early warning for implementation of necessary control measures.                                                                                                                                                                                                                                                      |
++------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Health-related event under surveillance  | COVID-19                                                                                                                                                                                                                                                                                                                         |
+|                                          |                                                                                                                                                                                                                                                                                                                                  |
+|                                          | -   R991: Suspected/probably COVID-19. A person who meets the clinical criteria: acute respiratory tract infection and one or more of the following symptoms: fever, cough, shortness of breath, loss of sense of smell/taste, or who is considered by a doctor to have suspected COVID-19.[@icpc2covid]                         |
+|                                          |                                                                                                                                                                                                                                                                                                                                  |
+|                                          | -   R992: Confirmed COVID-19. A person with coronavirus (SARS-CoV-2) confirmed by RT-PCR test, other nucleic acid amplification test or rapid antigen test (rapid immunoassay).[@icpc2covid]                                                                                                                                     |
++------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Population under surveillance            | All people in Norway who are eligible for treatment by state-sponsored general practitioners or out-of-hours primary care facilities.                                                                                                                                                                                            |
++------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Period of time of data collection        | -   R991: 2020-03-05 until present day.[@icpc2covid]                                                                                                                                                                                                                                                                             |
+|                                          |                                                                                                                                                                                                                                                                                                                                  |
+|                                          | -   R992: 2020-04-30 until present day.[@icpc2covid]                                                                                                                                                                                                                                                                             |
++------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| What data are collected                  | Number of consultations performed by state-sponsored general practitioners or out-of-hours primary care facilities corresponding to particular ICPC-2 codes.                                                                                                                                                                     |
++------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Reporting sources of data for the system | KUHR (Control and Payment of Health Reimbursements), which is a system that manages reimbursement claims from healthcare providers and institutions to the state (HELFO) in Norway. The system is owned by the Norwegian Directorate of Health. KUHR stores information about each patient's contact with a healthcare provider. |
++------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Systems data analyzed                    | Using Surveillance Core 9 ("sc9"), a free and open-source framework for real-time analysis and disease surveillance.[@sc9]                                                                                                                                                                                                       |
++------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+: Purpose and operation of COVID-19 surveillance in NorSySS.
+
+### Simplicity
+
+### Flexibility
+
+### Data quality
+
+### Acceptability
+
+### Sensitivity
+
+### Predictive value positive
+
+### Representativeness
+
+### Timeliness
+
+Definition: Timeliness reflects the speed between steps in a pub
+
+### Stability
 
 ```{r}
 #| echo: false
@@ -137,7 +196,6 @@ csstyle::save_a4(
 knitr::include_graphics(file)
 ```
 
-
 ```{r}
 #| echo: false
 #| fig-cap: Cross-correlation coefficients after pre-whitening between NorSySS (R991+R992, fe) and hard endpoints over various time-periods (Wuhan 2020-09 to 2021-06, Alpha 2021-07 to 2021-26, Delta 2021-27 to 2021-51, Omicron 2021-52 to 2023-20, No control 2022-07 to 2023-20, All 2020-09 to 2023-20) for all of Norway.
@@ -209,5 +267,3 @@ knitr::include_graphics(file)
 ## Discussion
 
 ## Conclusions
-
-
