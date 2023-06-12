@@ -1,5 +1,6 @@
 ---
 title: "Validating COVID-19 Surveillance in the Norwegian Syndromic Surveillance System (NorSySS)"
+bibliography: references.bib
 editor_options:
   chunk_output_type: console
 ---
@@ -39,7 +40,7 @@ results_p2 <- readRDS(org::path(org::project$data, "results_p2.RDS"))
 
 ## Introduction
 
-The Norwegian Syndromic Surveillance System (NorSySS) is a vital public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures. 
+The Norwegian Syndromic Surveillance System (NorSySS) is a vital public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures. @fredrickson2011low
 
 https://link.springer.com/article/10.3758/s13428-015-0611-2
 
