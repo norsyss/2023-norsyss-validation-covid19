@@ -1,4 +1,4 @@
-save_norsyss_data <- function(){
+save_norsyss_consultations_data <- function(){
   dbcon <- csdb::DBConnection_v9$new(
     driver = Sys.getenv("SC9_DBCONFIG_DRIVER"),
     port = as.integer(Sys.getenv("SC9_DBCONFIG_PORT")),
@@ -56,11 +56,11 @@ save_norsyss_data <- function(){
       setDT()
   }
   retval <- rbindlist(retval)
-  saveRDS(retval, fs::path(org::project$data, "norsyss.RDS"))
+  saveRDS(retval, fs::path(org::project$data, "data_norsyss_consultations.RDS"))
 }
 
-get_norsyss_data <- function(){
-  x <- readRDS(fs::path(org::project$data, "norsyss.RDS"))
+get_norsyss_consultations_data <- function(){
+  x <- readRDS(fs::path(org::project$data, "data_norsyss_consultations.RDS"))
   x <- x[isoyearweek >= "2020-09" & isoyearweek <= "2023-20"]
   return(x)
 }

@@ -27,10 +27,11 @@ library(data.table)
 library(ggplot2)
 library(magrittr)
 
-# save_norsyss_data()
+# save_norsyss_consultations_data()
+# save_norsyss_timeliness_data()
 
 p1 <- plnr::Plan$new()
-p1$add_data("norsyss", direct = get_norsyss_data())
+p1$add_data("norsyss", direct = get_norsyss_consultations_data())
 p1$add_data("hard", direct = get_hard_endpoint_data())
 
 p1$add_argset(x = 1)
@@ -143,6 +144,53 @@ results_p2[, lag_factor_reverse := factor(
 )]
 
 saveRDS(results_p2, org::path(org::project$data, "results_p2.RDS"), compress = "xz")
+
+# timeliness
+
+p3 <- plnr::Plan$new()
+p3$add_data("data", direct = get_norsyss_timeliness_data())
+for(i in c(0:29, 365)){
+  p3$add_argset(delay=i)
+}
+p3$apply_action_fn_to_all_argsets(analysis_timeliness_data)
+
+results <- p3$run_all()
+results <- rbindlist(results)
+results[days_delay==365, consultations_diagnosis_final_pr100 := consultations_diagnosis_temporary_pr100]
+results[days_delay==365, consultations_diagnosis_final_n := consultations_diagnosis_temporary_n]
+results[days_delay==365, consultations_all_final_n := consultations_all_temporary_n]
+results[
+  ,
+  c(
+    "consultations_diagnosis_final_pr100",
+    "consultations_diagnosis_final_n",
+    "consultations_all_final_n"
+  ) := .(
+    mean(consultations_diagnosis_final_pr100, na.rm=T),
+    mean(consultations_diagnosis_final_n, na.rm=T),
+    mean(consultations_all_final_n, na.rm=T)
+  ),
+  by = .(
+    isoyearweek_event,
+    location_code,
+    diagnosis
+  )]
+results[, pr100_diagnosis_temporary_over_final := consultations_diagnosis_temporary_pr100 / consultations_diagnosis_final_pr100]
+results[is.nan(pr100_diagnosis_temporary_over_final), pr100_diagnosis_temporary_over_final := 1]
+
+saveRDS(results, org::path(org::project$data, "results_p3.RDS"), compress = "xz")
+
+p4 <- plnr::Plan$new()
+p4$add_data("results", direct = readRDS(org::path(org::project$data, "results_p3.RDS")))
+
+for(m in c(1.05, 1.1, 1.15, 1.2)) for(pr in c(0.5, 0.6, 0.7, 0.8, 0.9)) {
+  p4$add_argset(magnitude=m, probability=pr)
+}
+p4$apply_action_fn_to_all_argsets(analysis_timeliness_results)
+
+results <- p4$run_all()
+results <- rbindlist(results)
+saveRDS(results, org::path(org::project$data, "results_p4.RDS"), compress = "xz")
 
 # render the quarto doc
 quarto::quarto_render(
