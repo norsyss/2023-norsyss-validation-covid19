@@ -14,6 +14,16 @@ analysis_pacf <- function(data, argset){
         icpc2group_tag=="covid19" & 
         tariffgroup_tag=="fe"
       ]$consultations_icpc2group_vs_all_pr100
-    )
+    ),
+    
+    "hospital_diff" = pacf(diff(data$hard$hospital_n), plot = F),
+    "icu_diff" = pacf(diff(data$hard$icu_n), plot = F),
+    "death_diff" = pacf(diff(data$hard$death_n), plot = F),
+    "norsyss_diff" = pacf(diff(
+      data$norsyss[
+        icpc2group_tag=="covid19" & 
+          tariffgroup_tag=="fe"
+      ]$consultations_icpc2group_vs_all_pr100
+    ))
   ))
 }

@@ -53,7 +53,7 @@ saveRDS(results_p1, org::path(org::project$data, "results_p1.RDS"), compress = "
 
 
 p2 <- plnr::Plan$new()
-p2$add_data("norsyss", direct = get_norsyss_data())
+p2$add_data("norsyss", direct = get_norsyss_consultations_data())
 p2$add_data("hard", direct = get_hard_endpoint_data())
 
 # wuhan >= 2020-09 & 2021-06
@@ -107,7 +107,7 @@ results_p2[, hard_label := factor(
 results_p2[, icpc2group_label := factor(
   icpc2group_tag,
   levels = c("r991", "r992", "covid19"),
-  labels = c("R991", "R992", "R991+R992")
+  labels = c("R991", "R992", "R991/R992")
 )]
 
 results_p2[, significant := abs(autocorrelations) > upper_ci]

@@ -31,7 +31,6 @@ analysis_timeliness_results <- function(data, argset){
   tail_probs <- (1-argset$probability)/2
   
   pd <- data$results[
-    location_code=="county_1" & 
     days_delay != 365,
     .(
       consultations_all_mean_n = round(mean(consultations_all_final_n)),

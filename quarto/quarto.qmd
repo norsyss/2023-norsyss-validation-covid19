@@ -1,5 +1,16 @@
 ---
 title: "A Statistical Evaluation of COVID-19 Surveillance in the Norwegian Syndromic Surveillance System (NorSySS)"
+author:
+  - name: "Richard Aubrey White"
+    orcid: 0000-0002-6747-1726
+  - name: "Trude Marie Lyngstad"
+  - name: "Beatriz Valcarcel Salamanca"
+affiliations:
+  - id: smhb
+    name: Norwegian Institute of Public Health
+    department: Department of Method Development and Analytics
+    city: Oslo
+    country: Norway
 bibliography: references.bib
 csl: biomed-central.csl
 editor_options:
@@ -34,29 +45,113 @@ project <- org::initialize_project(
 library(data.table)
 library(ggplot2)
 library(magrittr)
+library(patchwork)
 
 results_p1 <- readRDS(org::path(org::project$data, "results_p1.RDS"))
 results_p2 <- readRDS(org::path(org::project$data, "results_p2.RDS"))
+results_p3 <- readRDS(org::path(org::project$data, "results_p3.RDS"))
+results_p4 <- readRDS(org::path(org::project$data, "results_p4.RDS"))
 ```
+
+## Abstract
+
+### Background
+
+The context and purpose of the study
+
+### Methods
+
+How the study was performed and statistical tests used
+
+### Results
+
+The main findings
+
+### Conclusions
+
+Brief summary and potential implications
+
+## Keywords
+
+
 
 ## Introduction
 
-The Norwegian Syndromic Surveillance System (NorSySS) is a vital public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures.[@swanson2022one] As of the time of publishing, NorSySS surveils 87 ICPC-2 code combinations on a daily basis, at the national, county, and municipality level. The data
+The Norwegian Syndromic Surveillance System (NorSySS) is a public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures.[@swanson2022one] NorSySS shows how many consultations there have been with a diagnosis at the country's general practitioners and out-of-hours primary care facilities. NorSySS therefore shows trends and possible outbreaks of disease that lead to more people contacting the doctor. The figures do not indicate how many people have a certain diagnosis in the population, as the same person can go to the doctor several times with the same diagnosis, and others do not go to the doctor at all. The diagnosis made in doctors' offices and the out-of-hours primary care facilities is based on the patient's symptoms. Most often, the diagnosis is not confirmed with a laboratory examination.
 
-https://link.springer.com/article/10.3758/s13428-015-0611-2
+NorSySS uses ICPC-2 (International Classification of Primary Care) codes to determine the reason for contacting the healthcare facility. ICPC-2 codes are a classification system developed by the World Organization of Family Doctors to capture and order clinical information in primary care. It is formally recognized by the World Health Organization and is mapped to the International Classification of Diseases (ICD). ICPC is divided into 17 chapters by body systems, and it allows the capture of episodes of care over time. It is designed to reflect the content of primary care and is available in multiple languages. ICPC-2 codes are complementary to ICD, providing a meaningful level of detail for primary care. ICPC-2 does not capture a diagnosis per se, but rather the reason for the patient's encounter or visit to the healthcare provider. This is because in primary care, a patient's symptoms and complaints may not always lead to a definitive diagnosis, and the healthcare provider may need to monitor the patient over time or refer them for further testing or specialist care. The ICPC-2 system is designed to reflect the content of primary care and allow for the capture of episodes of care over time, regardless of whether a definitive diagnosis has been made.
+
+As of the time of publishing, NorSySS surveils 89 ICPC-2 code combinations on a daily basis, at the national, county, and municipality level.
+
+NorSySS' data source is KUHR (Control and Payment of Health Reimbursements), which is a system that manages reimbursement claims from healthcare providers and institutions to the state (HELFO) in Norway. The system is owned by the Norwegian Directorate of Health. KUHR is a system within KPR (Municipal Patient and User Register) that contains data from municipalities about individuals who have applied for, receive, or have received health and care services.
 
 ## Methods
 
-| Attribute          | Definition                                                                                              |
-|--------------------|---------------------------------------------------------------------------------------------------------|
-| Data quality       | Completeness and validity of the data recorded in the public health surveillance system.                |
-| Sensitivity        | Ability to detect outbreaks, including the ability to monitor changes in the number of cases over time. |
-| Representativeness | Accurately describing the occurrence of a health-related event over time.                               |
-| Timeliness         | The speed between steps in a public health surveillance system.                                         |
+We adapted the guidelines for evaluating public health surveillance systems as provided by the Centers for Disease Control and Prevention.[@guidelines2001] The guidelines were shortened to focus on the attributes that were most relevant to a statistical evaluation.
 
-: Attributes relevant to the statistical evaluation of COVID-19 surveillance in NorSySS.[@guidelines2001]
++-------------+---------------------------------------------------------------------------------------------------------+
+| Attribute   | Definition                                                                                              |
++=============+=========================================================================================================+
+| Sensitivity | Ability to detect outbreaks, including the ability to monitor changes in the number of cases over time. |
++-------------+---------------------------------------------------------------------------------------------------------+
+| Timeliness  | The speed between steps in a public health surveillance system.                                         |
++-------------+---------------------------------------------------------------------------------------------------------+
+
+: Attributes relevant to the statistical evaluation of COVID-19 surveillance in NorSySS.[@guidelines2001] {#tbl-attributes}
+
+### ICPC-2 codes and tariff codes in NorSySS
+
+We evaluated three ICPC-2 code combinations:
+
+- R991: Suspected/probably COVID-19. A person who meets the clinical criteria: acute respiratory tract infection and one or more of the following symptoms: fever, cough, shortness of breath, loss of sense of smell/taste, or who is considered by a doctor to have suspected COVID-19.[@icpc2covid] 
+- R992: Confirmed COVID-19. A person with coronavirus (SARS-CoV-2) confirmed by RT-PCR test, other nucleic acid amplification test or rapid antigen test (rapid immunoassay).[@icpc2covid]      
+- R991 or R992 (R991/R992).
+
+For each of the ICPC-2 code combinations, we also evaluated five tariff code combinations[@tbl-tariff]:
+
+- Consultation/visit (face-to-face) ["f"]
+- E-Consultation ["e"]
+- Simple contact ["s"]
+- Consultation/visit (face-to-face) or E-consultation ["fe"]
+- Consultation/visit (face-to-face) or E-consultation or simple contact ["fes"]
+
+
+|      | Consultation/visit (face-to-face) \["f"\]                                                                                                                                                                                                                                      |
+|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 11ad | Home visit by a general practitioner (day).                                                                                                                                                                                                                                    |
+| 11ak | Home visit by a general practitioner (night).                                                                                                                                                                                                                                  |
+| 2ad  | Consultation with a general practitioner (day).                                                                                                                                                                                                                                |
+| 2ak  | Consultation with a general practitioner (night).                                                                                                                                                                                                                              |
+| 2fk  | Consultation and supplement for being called to the office for immediate help during the emergency room when an ambulance has been used, for the first patient. Travel allowances and transport allowances can also be calculated. The tariff cannot be used for on-call duty. |
+|      | **E-Consultation \["e"\]**                                                                                                                                                                                                                                                     |
+| 2ae  | E-consultation with a GP and at the emergency room (day).                                                                                                                                                                                                                      |
+| 2aek | E-consultation with a GP and at the emergency room (night).                                                                                                                                                                                                                    |
+|      | **Simple contact \["s"\]**                                                                                                                                                                                                                                                     |
+| 1ad  | Simple patient contact by personal attendance or by delivery. The rate assumes that advice/guidance is given. Also applies when the contact/request results in the writing of a prescription, sick leave, requisition or referral (day).                                       |
+| 1ak  | Simple patient contact by personal attendance or by delivery. The rate assumes that advice/guidance is given. Also applies when the contact/request results in the writing of a prescription, sick leave, requisition or referral (night).                                     |
+| 1bd  | Simple patient contact in writing, by telephone or by electronic communication. The rate assumes that advice/guidance is given. Also applies when the contact/request results in the writing of a prescription sick note, requisition or referral (day).                       |
+| 1bk  | Simple patient contact in writing, by telephone or by electronic communication. The rate assumes that advice/guidance is given. Also applies when the contact/request results in the writing of a prescription sick note, requisition or referral (night).                     |
+| 1be  | Simple patient contact through electronic communication. The rate has expired on 1 July 2022, and included in rate 1bd.                                                                                                                                                        |
+| 1g   | Easy patient contact, enquiries, counseling by telephone between 23 and 08. The rate can only be used during emergency care in an on-call district without an on-call presence.                                                                                                |
+| 1h   | Sick leave and referral without patient present.                                                                                                                                                                                                                               |
+
+: The type of medical services rendered to the patient is also recorded as a "tariff code" (takstkode in Norwegian). {#tbl-tariff}
+
+### Sensitivity
+
+Sensitivity is defined as the ability to detect outbreaks, including the ability to monitor changes in the number of cases over time (@tbl-attributes). We began adressing sensitivity by inspecting partial autocorrelation (PACF) plots of the four time series to identify autocorrelation. Autocorrelation was then treated by differencing the time series with a lag of one unit (also known as "pre-whitening").[@Dean2015]
+
+After differencing the time series, we investigated which combination of ICPC-2 codes and tariff groups had the best cross-correlation with the hard endpoints (new hospital admissions, new ICU admissions, and new deaths) over the entire time period (2020-09 to 2023-20).
+
+We then investigated if these associations were robust over different time periods. Cross-correlation coefficients were then calculated for the comparison of NorSySS (ICPC-2 codes R991/R992 and tariff group "fe") against the hard endpoints (new hospital admissions, new ICU admissions, and new deaths) over multiple time periods: Wuhan (2020-09 to 2021-06), Alpha (2021-07 to 2021-26), Delta (2021-27 to 2021-51)[@datesdelta], Omicron (2021-52 to 2023)[@datesomicron], no control (2022-07 to 2023-20)[@datesnocontrol], all (2020-09 to 2023-20). No control represents the period after which "smitteverntiltakene oppheves" (the infection control measures are lifted).[@datesnocontrol]
+
+We then investigated if if a short-term trend algorithm[@csalert] classified weeks (increasing/null/decreasing) in the four timeseries (NorSySS ICPC-2 codes R991/R992 and tariff group "fe", new hospital admissions, new ICU admissions, and new deaths) similarly throughout the study period. Briefly, the algorithm fit a linear trend to a moving six week window of data using a quasipoisson regression. If the linear trend was significantly greater or less than 0, then the last week in the six week window was classified as increasing or decreasing, respectively. Otherwise the last week in the six week window was classified as null.
+
+### Timeliness
 
 ## Results
+
+### Purpose and operation
 
 +------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Indicator                                | Value                                                                                                                                                                                                                                                                                                                            |
@@ -88,50 +183,61 @@ https://link.springer.com/article/10.3758/s13428-015-0611-2
 
 : Purpose and operation of COVID-19 surveillance in NorSySS.
 
-### Simplicity
-
-### Flexibility
-
-### Data quality
-
-### Acceptability
-
 ### Sensitivity
 
-### Predictive value positive
+Definition: Ability to detect outbreaks, including the ability to monitor changes in the number of cases over time.
 
-### Representativeness
-
-### Timeliness
-
-Definition: Timeliness reflects the speed between steps in a pub
-
-### Stability
+We found that the four time series had an AR(1) pattern (@fig-pacf A, C, E, G), which was successfully removed via differencing (@fig-pacf B, D, F, H).
 
 ```{r}
 #| echo: false
 #| results: hide
 file <- org::path(org::project$results_today, "plot1.png")
 
-png(file, width = 2000, height = 2000, res = 300)
-par(mfrow=c(2,2))
-plot(results_p1$norsyss, main = "NorSySS (R991+R992, fe)")
+line = 1.7
+cex = 1.5
+side = 3
+adj=-0.2
+
+png(file, width = 2000, height = 3000, res = 300)
+par(
+  mfrow=c(4,2)
+)
+plot(results_p1$norsyss, main = "NorSySS (R991/R992, fe)")
+mtext("A.", side=side, line=line, cex=cex, adj=adj)
+plot(results_p1$norsyss_diff, main = "NorSySS (R991/R992, fe), differenced")
+mtext("B.", side=side, line=line, cex=cex, adj=adj)
 plot(results_p1$hospital, main = "Hospital")
+mtext("C.", side=side, line=line, cex=cex, adj=adj)
+plot(results_p1$hospital_diff, main = "Hospital, differenced")
+mtext("D.", side=side, line=line, cex=cex, adj=adj)
 plot(results_p1$icu, main = "ICU")
+mtext("E.", side=side, line=line, cex=cex, adj=adj)
+plot(results_p1$icu_diff, main = "ICU, differenced")
+mtext("F.", side=side, line=line, cex=cex, adj=adj)
 plot(results_p1$death, main = "Death")
+mtext("G.", side=side, line=line, cex=cex, adj=adj)
+plot(results_p1$death_diff, main = "Death, differenced")
+mtext("H.", side=side, line=line, cex=cex, adj=adj)
 dev.off()
 par(mfrow=c(1,1))
 ```
 
 ```{r}
 #| echo: false
-#| fig-cap: Partial autocorrelation plots (PACF) of four time series (NorSySS R991+R992 fe, new hospital admissions, new ICU admissions, new deaths) for all of Norway.
+#| label: fig-pacf
+#| fig-cap: Partial autocorrelation plots (PACF) of four time series (NorSySS R991/R992 fe, new hospital admissions, new ICU admissions, new deaths) for all of Norway.
 knitr::include_graphics(file)
 ```
 
+We found that the NorSySS combination of ICPC-2 codes R991/R992 and tariff codes fe had the highest cross-correlation coefficient with the hard endpoints of new hospital admissions, new ICU admissions, and new deaths (Figure @fig-cc-combinations).
+
+Furthermore, NorSySS (R991/R992, fe) was most correlated with new hospital admissions occuring in the same week (0.43) and the week after (0.41) (Figure @fig-cc-combinations). NorSySS (R991/R992, fe) was most correlated with new ICU admissions occuring in the week after (0.26) (Figure @fig-cc-combinations). NorSySS (R991/R992, fe) was most correlated with new deaths occuring two weeks after (0.43) (Figure @fig-cc-combinations).
+
 ```{r}
 #| echo: false
-#| fig-cap: Cross-correlation coefficients after pre-whitening between various NorSySS ICPC-2/tariff codes and hard endpoints between 2020-09 and 2023-20 for all of Norway.
+#| label: fig-cc-combinations
+#| fig-cap: Cross-correlation coefficients (after differencing) between various NorSySS ICPC-2/tariff codes and hard endpoints between 2020-09 and 2023-20 for all of Norway.
 
 file <- org::path(org::project$results_today, "plot2.png")
 
@@ -153,7 +259,7 @@ q <- ggplot(
 q <- q + geom_tile(color = "black", lwd=0.2)
 q <- q + geom_text(size = 2)
 q <- q + scale_fill_manual(
-  "Cross-correlation coefficients\nbetween NorSySS and hard\nendpoints after pre-whitening",
+  "Cross-correlation coefficients\nbetween NorSySS and hard\nendpoints after differencing",
   values = c(
     "#4575b4",
     "#74add1",
@@ -196,11 +302,16 @@ csstyle::save_a4(
 knitr::include_graphics(file)
 ```
 
+NorSySS (R991/R992, fe) showed moderate cross-correlation coefficients with new hospital admissions across all time periods (@fig-cc-timeperiods).
+
+The cross-correlation coefficients between NorSySS (R991/R992, fe) and new ICU admissions were moderate to high one week later during the Wuhan, Omicron, no control, and all time periods, while moderate to high during the same week for the Alpha and Delta time periods (@fig-cc-timeperiods).
+
+The cross-correlation coefficients between NorSySS (R991/R992, fe) and new deaths were moderate for 2-3 weeks later during the Wuhan, Omicron, and no control time periods, weak for 2-3 weeks later during the all time period, moderate two weeks later during the Alpha period, and moderate one week later during the Delta period (@fig-cc-timeperiods).
+
 ```{r}
 #| echo: false
-#| fig-cap: Cross-correlation coefficients after pre-whitening between NorSySS (R991+R992, fe) and hard endpoints over various time-periods (Wuhan 2020-09 to 2021-06, Alpha 2021-07 to 2021-26, Delta 2021-27 to 2021-51, Omicron 2021-52 to 2023-20, No control 2022-07 to 2023-20, All 2020-09 to 2023-20) for all of Norway.
-
-#| fig-cap: Cross-correlation coefficients between NorSySS (R991+R992, fe) and hard endpoints after pre-whitening
+#| label: fig-cc-timeperiods
+#| fig-cap: Cross-correlation coefficients (after differencing) between NorSySS (R991/R992, fe) and hard endpoints over various time-periods (Wuhan 2020-09 to 2021-06, Alpha 2021-07 to 2021-26, Delta 2021-27 to 2021-51, Omicron 2021-52 to 2023-20, No control 2022-07 to 2023-20, All 2020-09 to 2023-20) for all of Norway.
 
 file <- org::path(org::project$results_today, "plot3.png")
 
@@ -222,7 +333,7 @@ q <- ggplot(
 q <- q + geom_tile(color = "black", lwd=0.2)
 q <- q + geom_text(size = 3)
 q <- q + scale_fill_manual(
-"Cross-correlation coefficients\nbetween NorSySS and hard\nendpoints after pre-whitening",
+"Cross-correlation coefficients\nbetween NorSySS and hard\nendpoints after differencing",
   values = c(
     "#4575b4",
     "#74add1",
@@ -252,9 +363,10 @@ q <- q + scale_fill_manual(
 q <- q + facet_grid(hard_label~.)
 q <- q + theme_gray(base_size = 8)
 q <- q + theme(legend.position = "bottom")
-q <- q + guides(fill = guide_legend(nrow = 5)) 
+q <- q + guides(fill = guide_legend(nrow = 5))
 q <- q + scale_x_discrete("Weeks lag (+1 means NorSySS is correlated with events that occur one week later)")
 q <- q + scale_y_discrete("Time period")
+
 csstyle::save_a4(
   q, 
   file,
@@ -264,6 +376,237 @@ csstyle::save_a4(
 knitr::include_graphics(file)
 ```
 
+```{r}
+#| echo: false
+#| label: fig-cc-trend
+#| fig-cap: Six-week short-term trend for NorSySS (R991/R992, fe), new hospital admissions, new ICU admissions, and new deaths for all of Norway.
+
+file <- org::path(org::project$results_today, "plot4.png")
+
+d <- get_norsyss_consultations_data()
+d <- d[granularity_geo == "nation" & icpc2group_tag == "covid19" & tariffgroup_tag=="fe"]
+cstidy::set_csfmt_rts_data_v1(d)
+d_norsyss <- csalert::short_term_trend(
+  d,
+  numerator = "consultations_icpc2group_n",
+  denominator = "consultations_all_n",
+  numerator_naming_prefix = "generic"
+  )
+
+d <- get_hard_endpoint_data()
+d[, granularity_time := "isoyearweek"]
+cstidy::set_csfmt_rts_data_v1(d)
+d_hospital <- csalert::short_term_trend(
+  d,
+  numerator = "hospital_n",
+  numerator_naming_prefix = "generic"
+  )
+d_icu <- csalert::short_term_trend(
+  d,
+  numerator = "icu_n",
+  numerator_naming_prefix = "generic"
+  )
+d_death <- csalert::short_term_trend(
+  d,
+  numerator = "death_n",
+  numerator_naming_prefix = "generic"
+  )
+
+pd <- rbind(
+  d_norsyss[,.(
+      y_val = consultations_icpc2group_vs_all_pr100,
+      numerator_trend0_42_status,
+      isoyearweek,
+      type = "NorSySS"
+  )],
+  d_hospital[,.(
+      y_val = hospital_n,
+      numerator_trend0_42_status,
+      isoyearweek,
+      type = "Hospital"
+  )],
+  d_icu[,.(
+      y_val = icu_n,
+      numerator_trend0_42_status,
+      isoyearweek,
+      type = "ICU"
+  )],
+  d_death[,.(
+      y_val = death_n,
+      numerator_trend0_42_status,
+      isoyearweek,
+      type = "Death"
+  )]
+)
+
+pd <- pd[numerator_trend0_42_status != "forecast"]
+
+pd[, numerator_trend0_42_status := factor(
+  numerator_trend0_42_status,
+  levels = c("training","decreasing", "null", "increasing"),
+  labels = c("Train","Decrease", "Null", "Increase")
+)]
+
+pd[, type := factor(type, levels = c("NorSySS", "Hospital", "ICU", "Death"))]
+
+isoyearweeks <- rev(sort(unique(pd$isoyearweek)))
+pd[, isoyearweek_rev := factor(isoyearweek, levels = isoyearweeks)]
+
+pd[, time := "Wuhan"]
+pd[isoyearweek >= "2021-07" & isoyearweek <= "2021-26", time := "Alpha"]
+pd[isoyearweek >= "2021-27" & isoyearweek <= "2021-51", time := "Delta"]
+pd[isoyearweek >= "2021-52" & isoyearweek <= "2022-21", time := "Omicron wave 1"]
+pd[isoyearweek >= "2022-22" & isoyearweek <= "2022-38", time := "Omicron w. 2"]
+pd[isoyearweek >= "2022-39" & isoyearweek <= "2023-07", time := "Omicron w. 3"]
+pd[isoyearweek >= "2023-08", time := "Omicron w. 4"]
+pd[, time := factor(time, levels = c("Wuhan", "Alpha", "Delta", "Omicron wave 1", "Omicron w. 2", "Omicron w. 3", "Omicron w. 4"))]
+
+q <- ggplot(
+  pd,
+  aes(
+    x = type,
+    y = isoyearweek_rev,
+    fill = numerator_trend0_42_status
+  )
+)
+q <- q + geom_tile(color="black", linewidth = 0.2)
+q <- q + facet_grid(time~., scales="free", space = "free_y")
+q <- q + scale_x_discrete("Data type")
+q <- q + scale_y_discrete(NULL, breaks = csstyle::every_nth(4))
+q <- q + scale_fill_manual(
+  NULL, 
+  values = c(
+    "Train" = "purple",
+    "Decrease" = "#2c7bb6",
+    "Null" = "lightgrey",
+    "Increase" = "#d7191c"
+  )
+  )
+q <- q + guides(fill=guide_legend(nrow=2))
+q <- q + csstyle::theme_cs(
+  6.5,
+  panel.grid.major.x = FALSE, 
+  panel.grid.minor.x = FALSE, 
+  panel.grid.major.y = FALSE, 
+  panel.grid.minor.y = FALSE,
+  legend_position = "bottom"
+)
+q1 <- q
+
+coeff <- 0.05
+pd2 <- copy(pd)
+pd2[type=="NorSySS", y_val := y_val/coeff]
+q <- ggplot(
+  pd2,
+  aes(
+    x = isoyearweek_rev,
+    y = y_val,
+    color = type,
+    group = type
+  )
+)
+q <- q + geom_line(linewidth = 1)
+q <- q + annotate("segment", x=Inf, xend=Inf, y=-Inf, yend=Inf, lwd = 1)
+q <- q + facet_grid(time~., scales="free", space = "free_y")
+q <- q + scale_y_continuous(
+  "Number of new hospitalizations, ICU, deaths",
+  sec.axis = sec_axis(~.*coeff, name="NorSySS (% Consultations R991/R992, fe)"),
+  expand = expansion(mult = c(0, 0.1))
+  )
+q <- q + expand_limits(y=0)
+q <- q + scale_x_discrete(NULL, breaks = csstyle::every_nth(4))
+q <- q + scale_color_brewer(NULL, palette="Set1")
+q <- q + guides(color=guide_legend(nrow=2))
+q <- q + csstyle::theme_cs(
+  6.5,
+  panel.grid.major.x = TRUE, 
+  panel.grid.minor.x = TRUE, 
+  panel.grid.major.y = FALSE, 
+  panel.grid.minor.y = FALSE,
+  legend_position = "bottom"
+)
+q <- q + coord_flip()
+q2 <- q
+
+qx <- q1 + q2 + 
+  patchwork::plot_layout(widths = c(1, 2)) +
+  patchwork::plot_annotation(tag_levels = 'A')
+
+csstyle::save_a4(
+  qx, 
+  file,
+  landscape = FALSE,
+  scaling_factor = 0.7
+)
+knitr::include_graphics(file)
+
+```
+
+### Timeliness
+
+```{r}
+#| echo: false
+
+q <- ggplot(
+  results_p4,
+  aes(
+    x = probability,
+    y = recommended_day,
+    color = factor(magnitude)
+  )
+)
+q <- q + geom_line()
+q <- q + facet_wrap(~granularity_geo)
+q
+```
+
 ## Discussion
 
 ## Conclusions
+
+## List of abbreviations
+
+- NorSySS: Norwegian Syndromic Surveillance System
+- ICPC-2: International Classification of Primary Care
+- ICD: International Classification of Diseases
+- KUHR: Control and Payment of Health Reimbursements
+- KPR: Municipal Patient and User Register
+- f: Consultation/visit (face-to-face)
+- e: E-Consultation
+- s: Simple contact
+- fe: Consultation/visit (face-to-face) or E-consultation
+- fes: Consultation/visit (face-to-face) or E-consultation or simple contact
+- PACF: partial autocorrelation 
+
+## Declarations
+
+### Ethics approval and consent to participate
+
+Not applicable.
+
+### Consent for publication
+
+Not applicable.
+
+### Availability of data and materials
+
+The datasets analysed during the current study are available in the norsyss/2023-norsyss-statistical-evaluation-covid19 GitHub repository, https://www.github.com/norsyss/2023-norsyss-statistical-evaluation-covid19
+
+### Competing interests
+
+The authors declare that they have no competing interests.
+
+### Funding
+
+The authors are permanent employees of the Norwegian Institute of Public Health, funded by the Norwegian Government through the national budget. This research article was written as a part of their normal duties at work.
+
+### Authors' contributions
+
+RAW planned the analysis, analyzed the data, and wrote the first draft of the manuscript.
+
+All authors substantially interpreted the results and edited, commented on, read, and approved the final manuscript.
+
+### Acknowledgements
+
+Not applicable.
+
