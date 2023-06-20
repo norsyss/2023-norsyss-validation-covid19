@@ -73,17 +73,15 @@ Brief summary and potential implications
 
 ## Keywords
 
+Three to ten keywords representing the main content of the article.
 
+## Background
 
-## Introduction
+Due to the ongoing COVID-19 pandemic, life expectancy in Norway for men decreased 0.7 years from 2021 to 2022, the largest year-on-year drop in Norway since World War Two.[@ssblifeexpectancy] For the first 18 months of the COVID-19 pandemic, Norwegian surveillance of COVID-19 was primarily based on the registration of individual PCR results in the Norwegian Surveillance System for Communicable Diseases (MSIS). After the losing their reelection bid on the 13th of September 2021, the Solberg government's last days in office were used to declare victory over COVID-19 and remove most COVID-19 infection control measures so that "we can now live like we did before the pandemic".[@nrknormal] This led to significantly fewer PCR-test results being reported to MSIS, which resulted in the national surveillance strategy focusing on harder and more severe endpoints, such as new hospital admissions for COVID-19 as a primary diagnosis, new ICU admissions for COVID-19 as a primary diagnosis, and death from COVID-19.
 
-The Norwegian Syndromic Surveillance System (NorSySS) is a public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures.[@swanson2022one] NorSySS shows how many consultations there have been with a diagnosis at the country's general practitioners and out-of-hours primary care facilities. NorSySS therefore shows trends and possible outbreaks of disease that lead to more people contacting the doctor. The figures do not indicate how many people have a certain diagnosis in the population, as the same person can go to the doctor several times with the same diagnosis, and others do not go to the doctor at all. The diagnosis made in doctors' offices and the out-of-hours primary care facilities is based on the patient's symptoms. Most often, the diagnosis is not confirmed with a laboratory examination.
+There is an ongoing need for Norway's COVID-19 surveillance to include sources that are lower on the disease pyramid. The Norwegian Syndromic Surveillance System (NorSySS) is a public health surveillance system designed to detect outbreaks of infectious diseases and provide early warning for implementation of necessary control measures.[@swanson2022one] NorSySS surveils the proportion of consultations with a diagnosis at the country's general practitioners and out-of-hours primary care facilities. NorSySS shows trends and possible outbreaks of disease that lead to more people contacting the doctor. The figures do not indicate how many people have a certain diagnosis in the population, as the same person can go to the doctor several times with the same diagnosis, and others do not go to the doctor at all. The diagnosis made in doctors' offices and the out-of-hours primary care facilities is based on the patient's symptoms. Most often, the diagnosis is not confirmed with a laboratory examination.
 
-NorSySS uses ICPC-2 (International Classification of Primary Care) codes to determine the reason for contacting the healthcare facility. ICPC-2 codes are a classification system developed by the World Organization of Family Doctors to capture and order clinical information in primary care. It is formally recognized by the World Health Organization and is mapped to the International Classification of Diseases (ICD). ICPC is divided into 17 chapters by body systems, and it allows the capture of episodes of care over time. It is designed to reflect the content of primary care and is available in multiple languages. ICPC-2 codes are complementary to ICD, providing a meaningful level of detail for primary care. ICPC-2 does not capture a diagnosis per se, but rather the reason for the patient's encounter or visit to the healthcare provider. This is because in primary care, a patient's symptoms and complaints may not always lead to a definitive diagnosis, and the healthcare provider may need to monitor the patient over time or refer them for further testing or specialist care. The ICPC-2 system is designed to reflect the content of primary care and allow for the capture of episodes of care over time, regardless of whether a definitive diagnosis has been made.
-
-As of the time of publishing, NorSySS surveils 89 ICPC-2 code combinations on a daily basis, at the national, county, and municipality level.
-
-NorSySS' data source is KUHR (Control and Payment of Health Reimbursements), which is a system that manages reimbursement claims from healthcare providers and institutions to the state (HELFO) in Norway. The system is owned by the Norwegian Directorate of Health. KUHR is a system within KPR (Municipal Patient and User Register) that contains data from municipalities about individuals who have applied for, receive, or have received health and care services.
+NorSySS has been a part of Norway's COVID-19 surveillance strategy since the beginning of the pandemic, however, a number of reporting choices were made under pressure and have simply persisted due to institutional inertia. Thus, the aim of this study is to objectively evaluate NorSySS' performance as a COVID-19 surveillance system against harder and more severe endpoints: new hospital admissions for COVID-19 as a primary diagnosis, new ICU admissions for COVID-19 as a primary diagnosis, and death from COVID-19.
 
 ## Methods
 
@@ -101,13 +99,17 @@ We adapted the guidelines for evaluating public health surveillance systems as p
 
 ### ICPC-2 codes and tariff codes in NorSySS
 
+NorSySS uses ICPC-2 (International Classification of Primary Care) codes to determine the reason for contacting the healthcare facility. ICPC-2 does not capture a diagnosis per se, but rather the reason for the patient's encounter or visit to the healthcare provider. As of the time of publishing, NorSySS surveils 89 ICPC-2 code combinations on a daily basis, at the national, county, and municipality level.
+
+NorSySS' data source is KUHR (Control and Payment of Health Reimbursements), which is a system that manages reimbursement claims from healthcare providers and institutions to the state (HELFO) in Norway. The system is owned by the Norwegian Directorate of Health. KUHR is a system within KPR (Municipal Patient and User Register) that contains data from municipalities about individuals who have applied for, receive, or have received health and care services.
+
 We evaluated three ICPC-2 code combinations:
 
 - R991: Suspected/probably COVID-19. A person who meets the clinical criteria: acute respiratory tract infection and one or more of the following symptoms: fever, cough, shortness of breath, loss of sense of smell/taste, or who is considered by a doctor to have suspected COVID-19.[@icpc2covid] 
 - R992: Confirmed COVID-19. A person with coronavirus (SARS-CoV-2) confirmed by RT-PCR test, other nucleic acid amplification test or rapid antigen test (rapid immunoassay).[@icpc2covid]      
 - R991 or R992 (R991/R992).
 
-For each of the ICPC-2 code combinations, we also evaluated five tariff code combinations[@tbl-tariff]:
+For each of the ICPC-2 code combinations, we also evaluated five tariff code combinations ([@tbl-tariff]):
 
 - Consultation/visit (face-to-face) ["f"]
 - E-Consultation ["e"]
@@ -143,7 +145,7 @@ Sensitivity is defined as the ability to detect outbreaks, including the ability
 
 After differencing the time series, we investigated which combination of ICPC-2 codes and tariff groups had the best cross-correlation with the hard endpoints (new hospital admissions, new ICU admissions, and new deaths) over the entire time period (2020-09 to 2023-20).
 
-We then investigated if these associations were robust over different time periods. Cross-correlation coefficients were then calculated for the comparison of NorSySS (ICPC-2 codes R991/R992 and tariff group "fe") against the hard endpoints (new hospital admissions, new ICU admissions, and new deaths) over multiple time periods: Wuhan (2020-09 to 2021-06), Alpha (2021-07 to 2021-26), Delta (2021-27 to 2021-51)[@datesdelta], Omicron (2021-52 to 2023)[@datesomicron], no control (2022-07 to 2023-20)[@datesnocontrol], all (2020-09 to 2023-20). No control represents the period after which "smitteverntiltakene oppheves" (the infection control measures are lifted).[@datesnocontrol]
+We then investigated if these associations were robust over different time periods. Cross-correlation coefficients were then calculated for the comparison of NorSySS (ICPC-2 codes R991/R992 and tariff group "fe") against the hard endpoints (new hospital admissions, new ICU admissions, and new deaths) over multiple time periods: Wuhan (2020-09 to 2021-06), Alpha (2021-07 to 2021-26), Delta (2021-27 to 2021-51)[@datesdelta], Omicron (2021-52 to 2023)[@datesomicron], no control (2022-07 to 2023-20)[@datesnocontrol], all (2020-09 to 2023-20). No control represents the period after which "smitteverntiltakene oppheves" (all infection control measures are lifted).[@datesnocontrol]
 
 We then investigated if if a short-term trend algorithm[@csalert] classified weeks (increasing/null/decreasing) in the four timeseries (NorSySS ICPC-2 codes R991/R992 and tariff group "fe", new hospital admissions, new ICU admissions, and new deaths) similarly throughout the study period. Briefly, the algorithm fit a linear trend to a moving six week window of data using a quasipoisson regression. If the linear trend was significantly greater or less than 0, then the last week in the six week window was classified as increasing or decreasing, respectively. Otherwise the last week in the six week window was classified as null.
 
@@ -602,11 +604,10 @@ The authors are permanent employees of the Norwegian Institute of Public Health,
 
 ### Authors' contributions
 
-RAW planned the analysis, analyzed the data, and wrote the first draft of the manuscript.
-
-All authors substantially interpreted the results and edited, commented on, read, and approved the final manuscript.
+RAW planned the analysis, analyzed the data, and wrote the first draft of the manuscript. All authors substantially interpreted the results and edited, commented on, read, and approved draft manuscripts and the final manuscript.
 
 ### Acknowledgements
 
 Not applicable.
 
+## References
